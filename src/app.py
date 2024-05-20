@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 import os
 import database as db #importamos las datos de las conexiones a la base de datos
 
@@ -32,12 +32,21 @@ def home():
 # @app es la ruta para guardar usauarios en la bd
 @app.route('/user', methods=['POST'] ) 
 def addUser():
-    first_name = request.form('first_name')
-    last_name = request.form('last_name')
-    username = request.form('username')
-    city = request.form('city')
-    zip = request.form('zip')
-    terms_accepted = request.form()
+    first_name = request.form['first_name']
+    last_name = request.form['last_name']
+    username = request.form['username']
+    city = request.form['city']
+    ziper = request.form['zip']
+    terms_accepted = request.form['terms_accepted']
+    
+    if first_name and last_name and username:
+        cursor = db.database.cursor()
+        sql = "INSERT INTO usuarios (first_name, last_name, username, city, zip, terms_accepted) VALUES (%s, %s, %s, %s, %s, %s )"
+        data = (first_name, last_name, username, city, ziper, terms_accepted)
+        cursor.execute(sql, data)
+        db.database.commit()
+    return redirect(url_for('home')) 
+        
     
 
 #Creamos una condicion que si se lanza como programa principal el main se ejecute
